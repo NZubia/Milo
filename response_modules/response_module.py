@@ -34,12 +34,12 @@ def process_message(message):
 
     # Get response String array
     # TODO: Check this
-    response = get_response_from_message(skill_label)
+    response = get_response_from_message(skill_label, message)
 
     return response
 
 
-def get_response_from_message(skill_label):
+def get_response_from_message(skill_label, original_message):
     """
     Base on skill_label this method generate the info that the user needs
     :param skill_label: skill used for the response
@@ -58,7 +58,7 @@ def get_response_from_message(skill_label):
         skill_module = __import__(module_name, fromlist=[''])
 
         # Preparing responses
-        response = skill_module.get_response()
+        response = skill_module.get_response(original_message)
 
     except ImportError:
         logger.warning("IMPOSSIBLE TO IMPORT MODULE DEFAULT BEHAVIOR USED")

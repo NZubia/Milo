@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn import metrics
 
@@ -17,7 +19,7 @@ WEEKDAY = 6  # day of week allow to auto training    5: saturday 6: sunday
 MINPROB = 0.001  # min of probability for include a class i n options
 
 
-def train_model():
+def train_model(model='NN'):
     """
     This function train a naive bayes model
     :return: trained model
@@ -34,20 +36,30 @@ def train_model():
     test_feature_vector = count_vectorizer.transform(testing_data)
 
     # model declaration and training
-    naive_bayes_model = GaussianNB()
-    naive_bayes_model.fit(training_feature_vector.toarray(), training_targets)
+    if model == 'RF':
+        machine_learning_model = RandomForestClassifier()
+    elif model == 'NN':
+        machine_learning_model = MLPClassifier()
+    else:
+        machine_learning_model = GaussianNB()
+
+    machine_learning_model.fit(training_feature_vector.toarray(), training_targets)
 
     # model measure
-    test_data_predicted = naive_bayes_model.predict(test_feature_vector.toarray())
+    test_data_predicted = machine_learning_model.predict(test_feature_vector.toarray())
 
     cm = metrics.confusion_matrix(test_targets, test_data_predicted)
+    print("CONFUSSION MATRIX:")
+    print(cm)
+    print()
     score = metrics.accuracy_score(test_targets, test_data_predicted)
 
     logger.debug("TRAIN SCORE: %s", score)
+    print("TRAIN SCORE: %s", score)
 
     # TODO: save model
 
-    return naive_bayes_model, count_vectorizer
+    return machine_learning_model, count_vectorizer
 
 
 def predict_label(message):
@@ -129,6 +141,10 @@ def load_training_data():
         'agradecimientos':{
             'intents':['Gracias', 'Te lo agradezco'],
             'examples': ['Gracias', 'Te lo agradezco']
+        },
+        'reproducir': {
+            'intents': ['Reproduce la canción', 'Reproducir', 'cancion', 'canción', 'toca'],
+            'examples': ['Reproduce la canción', 'Reproducir', 'cancion', 'canción', 'toca']
         }
     }
 

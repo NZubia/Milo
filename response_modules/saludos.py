@@ -1,4 +1,4 @@
-def get_response():
+def get_response(message):
     """
     This function returns a greeting based on a query
     :return: list with the answer
